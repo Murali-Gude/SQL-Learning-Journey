@@ -1042,3 +1042,81 @@ LIMIT 10;
 
 -- =====================================================
 -- END OF SUBTOPIC 5: LIMIT
+
+
+-- =====================================================
+-- DAY 4: ORDER BY, LIMIT AND OFFSET
+-- SUBTOPIC 6: OFFSET
+-- =====================================================
+
+-- 1. OFFSET BASICS
+-- OFFSET skips the specified number of rows.
+-- LIMIT specifies the maximum number of rows to return.
+
+-- Example: Skip the first 3 employees and return the next 2.
+SELECT emp_id, emp_name, salary
+FROM employees
+ORDER BY emp_id ASC
+LIMIT 2 OFFSET 3;
+
+-- Expected output:
+-- 104 | Sneha | 40000
+-- 105 | Kiran | 30000
+
+
+-- 2. OFFSET WITH WHERE
+-- First filter employees earning 35000 or more.
+-- Then sort by salary in descending order.
+-- Skip the first 2 matching employees and return the next 2.
+
+SELECT emp_name, department, salary
+FROM employees
+WHERE salary >= 35000
+ORDER BY salary DESC
+LIMIT 2 OFFSET 2;
+
+-- Expected output:
+-- Ravi  | IT      | 45000
+-- Sneha | Finance | 40000
+
+
+-- 3. OFFSET WITH LIMIT
+-- Skip the first 3 matching employees.
+-- Return up to the next 4 employees.
+
+SELECT emp_name, department, salary
+FROM employees
+WHERE salary >= 35000
+ORDER BY salary DESC
+LIMIT 4 OFFSET 3;
+
+-- Expected output:
+-- Sneha | Finance | 40000
+-- Priya | HR      | 35000
+
+
+-- 4. OFFSET ZERO
+-- OFFSET 0 means no rows are skipped.
+
+SELECT emp_id, emp_name, salary
+FROM employees
+ORDER BY emp_id ASC
+LIMIT 3 OFFSET 0;
+
+-- Expected output:
+-- 101 | Ravi  | 45000
+-- 102 | Priya | 35000
+-- 103 | Arun  | 50000
+
+
+-- 5. IMPORTANT NOTES
+-- LIMIT 5 OFFSET 0: Skip 0 rows and return up to 5.
+-- LIMIT 5 OFFSET 3: Skip 3 rows and return up to 5.
+-- LIMIT 4 OFFSET 15: If fewer than 16 rows exist,
+--                    no rows are returned.
+--
+-- Remember:
+-- WHERE filters rows.
+-- ORDER BY sorts rows.
+-- OFFSET skips rows.
+-- LIMIT restricts the number of returned rows.
