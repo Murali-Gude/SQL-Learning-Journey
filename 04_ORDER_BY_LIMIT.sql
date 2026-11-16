@@ -1120,3 +1120,142 @@ LIMIT 3 OFFSET 0;
 -- ORDER BY sorts rows.
 -- OFFSET skips rows.
 -- LIMIT restricts the number of returned rows.
+
+-- =====================================================
+-- DAY 4: ORDER BY, LIMIT AND OFFSET
+-- SUBTOPIC 7: ORDER BY WITH LIMIT
+-- =====================================================
+
+-- 1. ORDER BY WITH LIMIT
+-- ORDER BY sorts records.
+-- LIMIT restricts the number of returned rows.
+
+-- Example 1: Get the 3 highest-paid employees.
+SELECT emp_name, salary
+FROM employees
+ORDER BY salary DESC
+LIMIT 3;
+
+-- Expected output:
+-- Anil | 55000
+-- Arun | 50000
+-- Ravi | 45000
+
+
+-- Example 2: Get the 2 lowest-paid employees.
+SELECT emp_name, salary
+FROM employees
+ORDER BY salary ASC
+LIMIT 2;
+
+-- Expected output:
+-- Kiran | 30000
+-- Priya | 35000
+
+
+-- 2. ORDER BY WITH WHERE AND LIMIT
+-- Get the 2 highest-paid employees in the IT department.
+
+SELECT emp_name, department, salary
+FROM employees
+WHERE department = 'IT'
+ORDER BY salary DESC
+LIMIT 2;
+
+-- Expected output:
+-- Anil | IT | 55000
+-- Arun | IT | 50000
+
+
+-- 3. PRACTICAL EXERCISE 1
+-- Get the 3 employees with the lowest salaries.
+
+SELECT emp_name, department, salary
+FROM employees
+ORDER BY salary ASC
+LIMIT 3;
+
+-- Expected output:
+-- Kiran  | HR      | 30000
+-- Priya  | HR      | 35000
+-- Sneha  | Finance | 40000
+
+
+-- 4. PRACTICAL EXERCISE 2
+-- Get the 3 highest-paid employees in the IT department.
+
+SELECT emp_name, department, salary
+FROM employees
+WHERE department = 'IT'
+ORDER BY salary DESC
+LIMIT 3;
+
+-- Expected output:
+-- Anil | IT | 55000
+-- Arun | IT | 50000
+-- Ravi | IT | 45000
+
+
+-- 5. INTERVIEW QUESTION 1
+-- Difference between ASC and DESC.
+
+-- DESC: Sorts from highest to lowest.
+-- ASC: Sorts from lowest to highest.
+
+-- Query A:
+SELECT emp_name, salary
+FROM employees
+ORDER BY salary DESC
+LIMIT 3;
+
+-- Expected output:
+-- Anil | 55000
+-- Arun | 50000
+-- Ravi | 45000
+
+-- Query B:
+SELECT emp_name, salary
+FROM employees
+ORDER BY salary ASC
+LIMIT 3;
+
+-- Expected output:
+-- Kiran | 30000
+-- Priya | 35000
+-- Sneha | 40000
+
+
+-- 6. INTERVIEW QUESTION 2
+-- Retrieve the second-highest-paid employee.
+
+SELECT emp_name, department, salary
+FROM employees
+ORDER BY salary DESC
+LIMIT 1 OFFSET 1;
+
+-- Expected output:
+-- Arun | IT | 50000
+
+-- If LIMIT is changed from 1 to 2,
+-- while keeping OFFSET 1:
+
+SELECT emp_name, department, salary
+FROM employees
+ORDER BY salary DESC
+LIMIT 2 OFFSET 1;
+
+-- Expected output:
+-- Arun | IT | 50000
+-- Ravi | IT | 45000
+
+
+-- 7. IMPORTANT NOTES
+-- ORDER BY salary ASC: Lowest to highest.
+-- ORDER BY salary DESC: Highest to lowest.
+-- LIMIT 3: Returns up to 3 rows.
+-- ORDER BY salary DESC LIMIT 3:
+-- Returns the 3 highest-paid employees.
+-- ORDER BY salary ASC LIMIT 3:
+-- Returns the 3 lowest-paid employees.
+-- ORDER BY salary DESC LIMIT 1 OFFSET 1:
+-- Skips the highest-paid employee and returns the second.
