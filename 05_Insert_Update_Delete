@@ -52,3 +52,68 @@ WHERE department = 'IT';
 -- 3. AUTO_INCREMENT Gaps: Failed INSERTs in InnoDB still increment the ID counter.
 -- 4. Performance: Multi-row INSERT / JDBC executeBatch() avoids N+1 network trips.
 -- ============================================================================
+-- ============================================================================
+-- Day 5 (Part 2): UPDATE — Complete Concepts, Patterns & Interview Notes
+-- Database: MySQL 8.0+ | Reference Table: employees(emp_id, emp_name, department, salary)
+-- ============================================================================
+
+-- 1. SINGLE-ROW & MULTI-COLUMN UPDATE
+UPDATE employees
+SET department = 'Marketing', salary = 36000
+WHERE emp_id = 109;
+
+-- 2. EXPRESSION-BASED UPDATE (Relative Calculations)
+-- Add a flat 5000 bonus to everyone in Finance
+UPDATE employees
+SET salary = salary + 5000
+WHERE department = 'Finance';
+
+-- 3. FILTERING NULL VALUES IN UPDATE
+-- Always use IS NULL (never = NULL)
+UPDATE employees
+SET salary = 30000, department = 'Support'
+WHERE salary IS NULL;
+
+-- 4. CONDITIONAL UPDATE USING CASE WHEN
+-- Apply tiered raises in a single atomic query
+UPDATE employees
+SET salary = CASE
+    WHEN salary < 37000 THEN salary + 4000
+    ELSE salary + 2000
+END
+WHERE department = 'HR';
+
+-- 5. SAFE UPDATE MODE & PRODUCTION TRANSACTION WORKFLOW
+-- Step A: Preview exact target rows before modifying anything
+SELECT * FROM employees WHERE department = 'IT';
+
+-- Step B: Temporarily disable Safe Update Mode if filtering on a non-KEY column
+SET SQL_SAFE_UPDATES = 0;
+
+-- Step C: Wrap risky updates in an explicit transaction
+START TRANSACTION;
+
+UPDATE employees
+SET salary = 52000
+WHERE department = 'IT';
+
+-- Verify changes before making them permanent
+SELECT * FROM employees WHERE department = 'IT';
+
+COMMIT;    -- Make permanent if verified
+-- ROLLBACK; -- Undo immediately if anything looks wrong
+
+-- Step D: Always re-enable Safe Update Mode
+SET SQL_SAFE_UPDATES = 1;
+
+-- ============================================================================
+-- KEY INTERVIEW TAKEAWAYS (UPDATE):
+-- 1. Rows matched vs Changed:
+--    - "Rows matched" = rows satisfying the WHERE condition.
+--    - "Changed" = rows whose column value actually changed on disk.
+-- 2. Safe Update Mode (Error 1175):
+--    - Blocks UPDATE/DELETE unless WHERE uses an indexed KEY column or LIMIT.
+-- 3. Production Safety:
+--    - Always run SELECT with the same WHERE clause first, and wrap bulk
+--      updates inside START TRANSACTION ... COMMIT / ROLLBACK.
+-- ============================================================================
