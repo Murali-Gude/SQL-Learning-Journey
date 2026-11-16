@@ -117,3 +117,57 @@ SET SQL_SAFE_UPDATES = 1;
 --    - Always run SELECT with the same WHERE clause first, and wrap bulk
 --      updates inside START TRANSACTION ... COMMIT / ROLLBACK.
 -- ============================================================================
+-- ============================================================================
+-- Day 6: DELETE vs. TRUNCATE vs. DROP — Complete Concepts & Interview Notes
+-- Database: MySQL 8.0+ | Reference Table: employees(emp_id, emp_name, department, salary)
+-- ============================================================================
+
+-- 1. DELETE (DML — Row-by-Row Removal)
+-- Remove a single employee by Primary Key
+DELETE FROM employees
+WHERE emp_id = 110;
+
+-- Remove multiple rows matching a condition
+DELETE FROM employees
+WHERE department = 'Marketing' AND salary < 40000;
+
+-- Transactional DELETE (can be rolled back before COMMIT)
+START TRANSACTION;
+DELETE FROM employees WHERE department = 'Support';
+ROLLBACK; -- Restores the deleted rows immediately
+
+-- 2. TRUNCATE TABLE (DDL — Fast Full-Table Wipe)
+-- Removes all rows, preserves table structure, resets AUTO_INCREMENT to 1
+-- Cannot use WHERE, cannot ROLLBACK, does NOT fire DELETE triggers
+TRUNCATE TABLE temp_imports;
+
+-- 3. DROP TABLE (DDL — Destroys Data + Table Structure)
+-- Removes rows, columns, indexes, triggers, and constraints permanently
+DROP TABLE IF EXISTS temp_imports;
+
+-- 4. PRODUCTION BEST PRACTICE: SOFT DELETE (Using UPDATE Instead of DELETE)
+-- Preserves audit history, foreign keys, and allows instant recovery
+-- ALTER TABLE employees ADD COLUMN is_deleted TINYINT DEFAULT 0, ADD COLUMN deleted_at DATETIME NULL;
+
+UPDATE employees
+SET is_deleted = 1, deleted_at = NOW()
+WHERE emp_id = 101;
+
+-- Active application queries simply filter out soft-deleted rows:
+SELECT * FROM employees WHERE is_deleted = 0;
+
+-- ============================================================================
+-- KEY INTERVIEW TAKEAWAYS (DELETE vs. TRUNCATE vs. DROP):
+-- 1. DML vs. DDL & Rollback:
+--    - DELETE is DML (logged in InnoDB undo log -> supports ROLLBACK).
+--    - TRUNCATE and DROP are DDL (implicit commit -> CANNOT be rolled back).
+-- 2. AUTO_INCREMENT & Triggers:
+--    - DELETE keeps the current AUTO_INCREMENT counter and fires DELETE triggers.
+--    - TRUNCATE resets AUTO_INCREMENT to 1 and skips triggers completely.
+-- 3. Foreign Key Constraint (Error 1701):
+--    - MySQL blocks TRUNCATE on any parent table referenced by a FOREIGN KEY,
+--      even if the child table has 0 rows; DELETE succeeds if 0 child rows match.
+-- 4. Soft Delete vs. Hard Delete:
+--    - Production systems prefer UPDATE (is_deleted / deleted_at) over DELETE
+--      to preserve historical records and recover accidental deletions easily.
+-- ============================================================================
