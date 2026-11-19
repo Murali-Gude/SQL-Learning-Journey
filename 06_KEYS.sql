@@ -76,4 +76,4 @@ CREATE TABLE enrollments (
 -- 4. Designing 1:1 vs. M:N:
 --    - 1:1 -> FOREIGN KEY + UNIQUE constraint on the child FK column.
 --    - M:N -> Junction table with 2 Foreign Keys + Composite PRIMARY KEY.
--- ============================================================================
+-- ===========================================================================
