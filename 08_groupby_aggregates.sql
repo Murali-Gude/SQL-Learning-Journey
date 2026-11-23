@@ -1,10 +1,10 @@
 
 -- =====================================================
--- DAY 8: AGGREGATE FUNCTIONS
--- SUBTOPIC 1: AGGREGATE FUNCTIONS BASICS
+-- DAY 8: AGGREGATE FUNCTIONS AND GROUP BY
 -- =====================================================
 
--- Reference table: employees
+-- Reference Table: employees
+--
 -- emp_id | emp_name | department | salary
 -- 101    | Ravi     | IT         | 45000
 -- 102    | Priya    | HR         | 35000
@@ -14,64 +14,48 @@
 -- 106    | Anil     | IT         | 55000
 
 
--- 1. SUM()
--- Calculates the total of numeric values.
+-- =====================================================
+-- SUBTOPIC 1: AGGREGATE FUNCTIONS
+-- =====================================================
 
-SELECT SUM(salary)
+-- 1. SUM() - Calculates total salary
+SELECT SUM(salary) AS total_salary
 FROM employees;
+-- Expected Output: 255000
 
--- Expected output: 255000
 
-
--- 2. AVG()
--- Calculates the average of numeric values.
-
-SELECT AVG(salary)
+-- 2. AVG() - Calculates average salary
+SELECT AVG(salary) AS average_salary
 FROM employees;
+-- Expected Output: 42500
 
--- Expected output: 42500
 
-
--- 3. MAX()
--- Returns the highest value.
-
-SELECT MAX(salary)
+-- 3. MAX() - Finds highest salary
+SELECT MAX(salary) AS highest_salary
 FROM employees;
+-- Expected Output: 55000
 
--- Expected output: 55000
 
-
--- 4. MIN()
--- Returns the lowest value.
-
-SELECT MIN(salary)
+-- 4. MIN() - Finds lowest salary
+SELECT MIN(salary) AS lowest_salary
 FROM employees;
+-- Expected Output: 30000
 
--- Expected output: 30000
 
-
--- 5. COUNT(*)
--- Counts all rows, including rows containing NULL values.
-
-SELECT COUNT(*)
+-- 5. COUNT(*) - Counts all rows
+SELECT COUNT(*) AS total_employees
 FROM employees;
+-- Expected Output: 6
 
--- Expected output: 6
 
-
--- 6. COUNT(column_name)
--- Counts only non-NULL values in the specified column.
-
-SELECT COUNT(department)
+-- 6. COUNT(department) - Counts non-NULL department values
+SELECT COUNT(department) AS department_count
 FROM employees;
+-- Expected Output: 6 for the reference table above.
+-- If one department value is NULL, output will be 5.
 
--- If one department value is NULL among six rows,
--- Expected output: 5
 
-
--- 7. MULTIPLE AGGREGATE FUNCTIONS WITH ALIASES
--- Calculate several summary values in one query.
-
+-- 7. Multiple aggregate functions in one query
 SELECT
     COUNT(*) AS total_employees,
     SUM(salary) AS total_salary,
@@ -80,20 +64,125 @@ SELECT
     MIN(salary) AS lowest_salary
 FROM employees;
 
--- Expected output:
--- total_employees | total_salary | average_salary
--- 6               | 255000       | 42500
---
--- highest_salary | lowest_salary
--- 55000          | 30000
+-- Expected Output:
+-- total_employees: 6
+-- total_salary:    255000
+-- average_salary:  42500
+-- highest_salary:  55000
+-- lowest_salary:   30000
 
 
--- IMPORTANT NOTES
--- COUNT(*) counts all rows.
--- COUNT(column) excludes NULL values.
--- SUM() calculates total.
--- AVG() calculates average.
--- MAX() finds the highest value.
--- MIN() finds the lowest value.
--- Without GROUP BY, aggregate functions summarize
--- the entire selected set into one result row.
+-- =====================================================
+-- SUBTOPIC 2: GROUP BY
+-- =====================================================
+
+-- 1. Count employees in each department
+SELECT
+    department,
+    COUNT(emp_id) AS employees
+FROM employees
+GROUP BY department;
+
+-- Expected Output:
+-- IT       3
+-- HR       2
+-- Finance  1
+
+
+-- 2. Average salary in each department
+SELECT
+    department,
+    AVG(salary) AS avg_salary
+FROM employees
+GROUP BY department;
+
+-- Expected Output:
+-- IT       50000
+-- HR       32500
+-- Finance  40000
+
+
+-- 3. Highest salary in each department
+SELECT
+    department,
+    MAX(salary) AS highest_salary
+FROM employees
+GROUP BY department;
+
+-- Expected Output:
+-- IT       55000
+-- HR       35000
+-- Finance  40000
+
+
+-- 4. Lowest salary in each department
+SELECT
+    department,
+    MIN(salary) AS lowest_salary
+FROM employees
+GROUP BY department;
+
+-- Expected Output:
+-- IT       45000
+-- HR       30000
+-- Finance  40000
+
+
+-- 5. Count employees and calculate total salary
+--    in each department
+SELECT
+    department,
+    COUNT(*) AS no_of_employees,
+    SUM(salary) AS total_salary
+FROM employees
+GROUP BY department;
+
+-- Expected Output:
+-- IT       3       150000
+-- HR       2        65000
+-- Finance  1        40000
+
+
+-- 6. Multiple aggregate functions with GROUP BY
+SELECT
+    department,
+    COUNT(*) AS employees,
+    SUM(salary) AS total_salary,
+    AVG(salary) AS avg_salary,
+    MAX(salary) AS highest_salary,
+    MIN(salary) AS lowest_salary
+FROM employees
+GROUP BY department;
+
+
+-- =====================================================
+-- IMPORTANT CONCEPTS
+-- =====================================================
+
+-- Without GROUP BY:
+-- Aggregate functions calculate across all rows
+-- and return one result row.
+
+SELECT COUNT(*) AS total_employees
+FROM employees;
+-- Output: 6
+
+
+-- With GROUP BY:
+-- Aggregate functions calculate separately
+-- for each group.
+
+SELECT department, COUNT(*) AS employees
+FROM employees
+GROUP BY department;
+
+
+-- Interview concept:
+-- With ONLY_FULL_GROUP_BY enabled, selecting a
+-- non-aggregated column alongside an aggregate
+-- requires that column to be grouped or otherwise
+-- functionally dependent on the GROUP BY columns.
+
+-- =====================================================
+-- END OF DAY 8 - COMPLETED SUBTOPICS 1 AND 2
+-- =====================================================
