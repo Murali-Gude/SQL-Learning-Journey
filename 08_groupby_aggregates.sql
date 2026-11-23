@@ -30,3 +30,5 @@ INNER JOIN employees e ON d.dept_id = e.dept_id
 WHERE e.salary >= 60000
 GROUP BY d.dept_name
 HAVING COUNT(e.emp_id) >= 2;
+
+============================================================================
