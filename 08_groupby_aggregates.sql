@@ -227,3 +227,76 @@ GROUP BY department, salary;
 -- GROUP BY department, salary creates one group
 -- for each distinct combination of both values.
 -- Rows matching both values belong to the same group.
+
+
+-- =====================================================
+-- SUBTOPIC 4: HAVING
+-- =====================================================
+
+-- 1. Departments with average salary greater than 35000
+SELECT
+    department,
+    AVG(salary) AS avg_salary
+FROM employees
+GROUP BY department
+HAVING AVG(salary) > 35000;
+
+-- Expected Output:
+-- IT       50000
+-- Finance  40000
+
+
+-- 2. Departments with more than 1 employee
+SELECT
+    department,
+    COUNT(*) AS employees
+FROM employees
+GROUP BY department
+HAVING COUNT(*) > 1;
+
+-- Expected Output:
+-- IT  3
+-- HR  2
+
+
+-- 3. Departments with total salary greater than 50000
+SELECT
+    department,
+    SUM(salary) AS total_salary
+FROM employees
+GROUP BY department
+HAVING SUM(salary) > 50000;
+
+-- Expected Output:
+-- IT  150000
+-- HR   65000
+
+
+-- 4. WHERE and HAVING together
+SELECT
+    department,
+    AVG(salary) AS avg_salary
+FROM employees
+WHERE salary > 30000
+GROUP BY department
+HAVING AVG(salary) > 40000;
+
+-- WHERE filters individual rows before grouping.
+-- HAVING filters groups after aggregation.
+
+
+-- =====================================================
+-- IMPORTANT: WHERE vs HAVING
+-- =====================================================
+
+-- WHERE: filters individual rows.
+-- GROUP BY: creates groups.
+-- HAVING: filters grouped results.
+
+-- Logical execution order:
+-- FROM -> WHERE -> GROUP BY -> HAVING
+-- -> SELECT -> ORDER BY -> LIMIT
+
+-- =====================================================
+-- END OF SUBTOPIC 4: HAVING
+-- =====================================================
