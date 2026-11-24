@@ -186,3 +186,44 @@ GROUP BY department;
 -- =====================================================
 -- END OF DAY 8 - COMPLETED SUBTOPICS 1 AND 2
 -- =====================================================
+-- =====================================================
+-- SUBTOPIC 3: GROUP BY MULTIPLE COLUMNS
+-- =====================================================
+
+-- 1. Total salary for each department-and-salary combination
+SELECT
+    department,
+    salary,
+    SUM(salary) AS total_salary
+FROM employees
+GROUP BY department, salary;
+
+-- Expected output:
+-- IT       45000   45000
+-- IT       50000   50000
+-- IT       55000   55000
+-- HR       30000   30000
+-- HR       35000   35000
+-- Finance  40000   40000
+
+
+-- 2. Count employees for each department-and-salary combination
+SELECT
+    department,
+    salary,
+    COUNT(*) AS employees
+FROM employees
+GROUP BY department, salary;
+
+-- Expected output:
+-- IT       45000   1
+-- IT       50000   1
+-- IT       55000   1
+-- HR       30000   1
+-- HR       35000   1
+-- Finance  40000   1
+
+-- Key concept:
+-- GROUP BY department, salary creates one group
+-- for each distinct combination of both values.
+-- Rows matching both values belong to the same group.
